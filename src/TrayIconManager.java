@@ -17,6 +17,7 @@
  *
  **/
 import java.awt.AWTException;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
@@ -46,6 +47,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingConstants;
@@ -171,7 +173,6 @@ class TrayIconManager {
 	 */
 	void trayIcon() throws IOException {
 		if (SystemTray.isSupported()) {
-			listSoundFiles.clear();
 			try {
 				listSoundFiles = getResourceListing(TrayIconManager.class, RESOURCE_PATH, "wav");
 			} catch (URISyntaxException e2) {
@@ -188,6 +189,22 @@ class TrayIconManager {
 				@Override
 				public void itemStateChanged(ItemEvent e) {
 					trayToStrike.toggleMute();
+				}
+			};
+			ActionListener aboutListener = new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					Object[] options = {"OK"};
+					JOptionPane.showOptionDialog(null,
+							"This program is open source software.\n" +
+									"Its only purpose is to emit beeps when keyboard is stroke.\n" +
+									"Find more information here http://twoblackcoffees.com/category/own-programs/strikentick.",
+									"About Strik'N'Tick",
+									JOptionPane.PLAIN_MESSAGE,
+									JOptionPane.PLAIN_MESSAGE,
+									null,
+									options,
+									options[0]);				
 				}
 			};
 
@@ -207,6 +224,10 @@ class TrayIconManager {
 			popupMenu.add(muteItem);
 			popupMenu.addSeparator();
 
+			JMenuItem aboutItem = new JMenuItem("About");
+			aboutItem.addActionListener(aboutListener);
+			popupMenu.add(aboutItem);
+			popupMenu.add(new JMenuItem("Close menu"));
 			JMenuItem exitItem = new JMenuItem("Exit");
 			exitItem.addActionListener(exitListener);
 			popupMenu.add(exitItem);
