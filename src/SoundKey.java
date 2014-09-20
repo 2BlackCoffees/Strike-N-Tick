@@ -29,45 +29,45 @@ import java.util.List;
  * 
  */
 class SoundKey {
-    private URL url;
-    private final List<Integer> listKeys;
-    private final String name;
-    private String fileName;
-    private static String RESOURCE_PATH = null;
+	private URL url;
+	private final List<Integer> listKeys;
+	private final String name;
+	private String fileName;
+	private static String RESOURCE_PATH = null;
 
-    static void setResourcePath(String resourcePath) {
-	RESOURCE_PATH = resourcePath;
-    }
-
-    SoundKey(String fileName, List<Integer> listKeys, String name) {
-	if (RESOURCE_PATH == null) {
-	    throw new NullPointerException("RESOURCE_PATH is null!");
+	static void setResourcePath(String resourcePath) {
+		RESOURCE_PATH = resourcePath;
 	}
-	setFilename(fileName);
-	this.listKeys = listKeys;
-	this.name = name;
-    }
 
-    String getFileName() {
-	return fileName;
-    }
+	SoundKey(String fileName, List<Integer> listKeys, String name) {
+		if (RESOURCE_PATH == null) {
+			throw new NullPointerException("RESOURCE_PATH is null!");
+		}
+		setFilename(fileName);
+		this.listKeys = listKeys;
+		this.name = name;
+	}
 
-    List<Integer> getListKeys() {
-	return listKeys;
-    }
+	String getFileName() {
+		return fileName;
+	}
 
-    String getName() {
-	return name;
-    }
+	List<Integer> getListKeys() {
+		return listKeys;
+	}
 
-    final URL getURL() {
-	return url;
-    }
+	String getName() {
+		return name;
+	}
 
-    void setFilename(String fileName) {
-	this.url = getClass().getClassLoader().getResource(
-		RESOURCE_PATH + fileName);
-	this.fileName = fileName;
-    }
+	final URL getURL() {
+		return url;
+	}
+
+	void setFilename(String fileName) {
+		this.url = getClass().getClassLoader().getResource(
+				RESOURCE_PATH + fileName);
+		this.fileName = fileName;
+	}
 
 }

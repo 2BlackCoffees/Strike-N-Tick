@@ -17,7 +17,6 @@
  *
  **/
 import java.awt.AWTException;
-import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
@@ -71,12 +70,6 @@ class TrayIconManager {
 	}
 
 	TrayIconManager(List<SoundKey> listSoundKeys, TrayToStrike trayToStrike) {
-		/*
-		Toolkit tk = Toolkit.getDefaultToolkit();
-		URL urlImage = getClass().getResource(RESOURCE_PATH + "MusicGrey.png");
-		Image img = tk.createImage(urlImage);
-		tk.prepareImage(img, -1, -1, null);
-		 */
 		if (RESOURCE_PATH == null) {
 			throw new NullPointerException("RESOURCE_PATH is null!");
 		}
@@ -265,26 +258,64 @@ class TrayIconManager {
 	 */
 	private List<JMenu> createMenuList() {
 		List<JMenu> listMenu = new ArrayList<JMenu>();
-		for (final SoundKey soundKey : listSoundKeys) {
-			JMenu menu = new JMenu(soundKey.getName());
-			listMenu.add(menu);
-			ButtonGroup buttonGroup = new ButtonGroup();
-			for (final String fileName : listSoundFiles) {
-				JRadioButtonMenuItem radioButtonMenuItem = new JRadioButtonMenuItem(
-						fileName, fileName.equals(soundKey.getFileName()));
-				ItemListener soundFileListener = new ItemListener() {
-					@Override
-					public void itemStateChanged(ItemEvent e) {
-						soundKey.setFilename(fileName);
-					}
-				};
-				radioButtonMenuItem.addItemListener(soundFileListener);
-				menu.add(radioButtonMenuItem);
-				buttonGroup.add(radioButtonMenuItem);
+		List<Integer> fullListKeys = new ArrayList<Integer>();
 
-			}
+		for (final SoundKey soundKey : listSoundKeys) {
+			List<Integer> listKeys = soundKey.getListKeys();
+			if(listKeys != null) fullListKeys.addAll(listKeys);
+			createMenu(soundKey, listMenu, false /* Do not change all menus on selection */);
+		}
+		if(fullListKeys.size() > 0) {
+			SoundKey allSoundKey = new SoundKey(null, fullListKeys, "All keys");
+			createMenu(allSoundKey, listMenu, true /* Changes all radio selection on selection */);
 		}
 		return listMenu;
+	}
+
+	/**
+	 * Create new menu
+	 * @param soundKey
+	 * @param listMenu
+	 */
+	private void createMenu(final SoundKey soundKey, final List<JMenu> listMenu, final boolean changeAllMenusOnSelection) {
+		JMenu menu = new JMenu(soundKey.getName());
+		listMenu.add(menu);
+		ButtonGroup buttonGroup = new ButtonGroup();
+		for (final String fileName : listSoundFiles) {
+			JRadioButtonMenuItem radioButtonMenuItem = new JRadioButtonMenuItem(
+					fileName, soundKey.getFileName() != null && fileName.equals(soundKey.getFileName()));
+			ItemListener soundFileListener = new ItemListener() {
+				@Override
+				public void itemStateChanged(ItemEvent e) {
+					if(changeAllMenusOnSelection) {
+						for (final SoundKey soundKey : listSoundKeys) {
+							soundKey.setFilename(fileName);
+						}
+						// TODO: Following code generates a stack overflow (Due to the many recursions due to 
+						// the listeners: Listeners should be first be deactivated an then menu selection could be changed
+						// At the moment the code is not used but left as reference 
+						/*
+						for(final JMenu menu : listMenu) {
+							for(MenuElement mainElement: menu.getSubElements()) {
+								for(MenuElement subElements: mainElement.getSubElements()) {
+									String menuLabel = ((JRadioButtonMenuItem)((subElements.getComponent()))).getText();
+									((JRadioButtonMenuItem)((subElements.getComponent()))).
+									setSelected(fileName.equals(menuLabel));
+								}
+							}
+						}
+						*/
+					} else {
+						soundKey.setFilename(fileName);
+					}
+				}
+			};
+			radioButtonMenuItem.addItemListener(soundFileListener);
+			menu.add(radioButtonMenuItem);
+			buttonGroup.add(radioButtonMenuItem);
+
+		}
+
 	}
 
 }

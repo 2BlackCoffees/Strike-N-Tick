@@ -32,10 +32,6 @@ import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UIManager.LookAndFeelInfo;
-import javax.swing.UnsupportedLookAndFeelException;
-
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
@@ -89,15 +85,13 @@ public class StrikeNTick implements NativeKeyListener, TrayToStrike {
 	StrikeNTick() {
 		SoundKey.setResourcePath(RESOURCE_PATH);
 		TrayIconManager.setResourcePath(RESOURCE_PATH);
-		listSoundKeys = new ArrayList<SoundKey>(Arrays.asList(new SoundKey(
-				"TickPhone1.wav", KeyFamilies.functionKeys, "Function keys"),
-				new SoundKey("Tick1.wav", KeyFamilies.controlKeys,
-						"Control keys"), new SoundKey("TickPhone3.wav",
-								KeyFamilies.signKeys, "Sign keys"), new SoundKey(
-										"TickMetal.wav", KeyFamilies.alphaKeys, "Alpha keys"),
-										new SoundKey("TickPhone4.wav", KeyFamilies.numericalKeys,
-												"Numerical keys"), new SoundKey("TickPhone5.wav",
-														null, "Other keys")));
+		listSoundKeys = new ArrayList<SoundKey>(Arrays.asList(
+				new SoundKey("TickPhone1.wav", 	KeyFamilies.functionKeys, 	"Function keys"),
+				new SoundKey("Tick1.wav", 		KeyFamilies.controlKeys, 	"Control keys"), 
+				new SoundKey("TickPhone3.wav", 	KeyFamilies.signKeys, 		"Sign keys"), 
+				new SoundKey("TickMetal.wav", 	KeyFamilies.alphaKeys, 		"Alpha keys"),
+				new SoundKey("TickPhone4.wav", 	KeyFamilies.numericalKeys, 	"Numerical keys"), 
+				new SoundKey("TickPhone5.wav", 	null, 						"Other keys")));
 		trayIconManager = new TrayIconManager(listSoundKeys, this);
 
 	}
@@ -190,10 +184,12 @@ public class StrikeNTick implements NativeKeyListener, TrayToStrike {
 	public static void main(String[] args) {
 
 		if (args.length > 0 && args[0].equalsIgnoreCase("-service")) {
+			// Find out the path of the class
 			String currentFile = new java.io.File(StrikeNTick.class
 					.getProtectionDomain().getCodeSource().getLocation()
 					.getPath()).getName();
 			try {
+				// Start the class
 				System.out.println("Starting service " + currentFile);
 				Runtime.getRuntime().exec("java -jar " + currentFile);
 			} catch (IOException e) {
